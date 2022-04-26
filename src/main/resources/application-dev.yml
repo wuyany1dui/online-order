@@ -1,0 +1,29 @@
+#数据库配置
+spring:
+  datasource:
+    url: jdbc:mysql://47.110.67.221:3306/online_order
+    username: root
+    password: tel2229@
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+    type: com.zaxxer.hikari.HikariDataSource
+  mvc:
+    throw-exception-if-no-handler-found: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+
+# 自定义应用配置
+onlineOrder:
+  filePath: /home/ftp/onlineOrder

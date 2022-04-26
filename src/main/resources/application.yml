@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: online-order
+
+server:
+  port: 8597
+  servlet:
+    context-path: /online/order
+
+mybatis-plus:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.spnice.sgsms.settingmanagement.entity
+  type-enums-package: com.spnice.sgsms.settingmanagement.enums
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
+    jdbc-type-for-null: 'null'
+  global-config:
+    db-config:
+      id-type: assign_uuid
