@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 /**
  * @author Created by DrEAmSs on 2022-04-26 13:14
  */
-@Api(tags = "商家后台管理")
+@Api(tags = "商家后台")
 @RestController
 @RequestMapping("/store")
 public class StoreController {

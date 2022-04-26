@@ -60,10 +60,10 @@ public class ProductServiceImpl implements ProductService {
                 .eq(StringUtils.isNotBlank(productListQueryVo.getStoreId()), Product::getStoreId, productListQueryVo.getStoreId())
                 .like(StringUtils.isNotBlank(productListQueryVo.getType()), Product::getType, productListQueryVo.getType());
         if (Objects.nonNull(productListQueryVo.getStartPrice()) && Objects.nonNull(productListQueryVo.getEndPrice())) {
-            productLambdaQueryChainWrapper.gt(Product::getPrice, productListQueryVo.getStartPrice())
+            productLambdaQueryChainWrapper.ge(Product::getPrice, productListQueryVo.getStartPrice())
                     .le(Product::getPrice, productListQueryVo.getEndPrice());
         } else if (Objects.nonNull(productListQueryVo.getStartPrice()) && Objects.isNull(productListQueryVo.getEndPrice())) {
-            productLambdaQueryChainWrapper.gt(Product::getPrice, productListQueryVo.getStartPrice());
+            productLambdaQueryChainWrapper.ge(Product::getPrice, productListQueryVo.getStartPrice());
         } else if (Objects.isNull(productListQueryVo.getStartPrice()) && Objects.nonNull(productListQueryVo.getEndPrice())) {
             productLambdaQueryChainWrapper.le(Product::getPrice, productListQueryVo.getEndPrice());
         }

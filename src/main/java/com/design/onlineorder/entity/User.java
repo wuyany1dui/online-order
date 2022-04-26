@@ -1,5 +1,6 @@
 package com.design.onlineorder.entity;
 
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.design.onlineorder.enums.UserTypeEnum;
 import lombok.Data;
@@ -67,4 +68,10 @@ public class User {
      * 用户类型 0：普通用户 1：商家 2：系统管理员
      */
     private UserTypeEnum type;
+
+    /**
+     * 逻辑删除字段
+     */
+    @TableLogic
+    private Integer deleted;
 }

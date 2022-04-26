@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 /**
  * @author Created by DrEAmSs on 2022-04-25 17:51
  */
-@Api(tags = "用户管理")
+@Api(tags = "用户")
 @RestController
 @RequestMapping("/user")
 public class UserController {

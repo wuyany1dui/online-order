@@ -20,7 +20,9 @@ public enum ResultEnum implements BaseEnum<Integer> {
     ACCESS_DENIED(9, "用户权限不足"),
     TOO_MANY_STORES(10, "一个用户只能创建一个店铺"),
     STORE_NAME_EXISTS(11, "店铺名已存在"),
-    STORE_NOT_EXISTS(12, "当前用户没有创建店铺");
+    STORE_NOT_EXISTS(12, "当前用户没有创建店铺"),
+    ORDER_NOT_EXISTS(13, "当前订单不存在"),
+    ORDER_ALREADY_PAID(14, "订单已支付");
 
     private final Integer value;
     private final String label;
