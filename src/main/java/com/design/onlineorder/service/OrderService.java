@@ -1,5 +1,7 @@
 package com.design.onlineorder.service;
 
+import com.design.onlineorder.vo.OrderListPageVo;
+import com.design.onlineorder.vo.OrderListQueryVo;
 import com.design.onlineorder.vo.OrderVo;
 
 /**
@@ -16,4 +18,9 @@ public interface OrderService {
      * 支付订单
      */
     void pay(String id);
+
+    /**
+     * 查询订单列表
+     */
+    OrderListPageVo queryList(OrderListQueryVo orderListQueryVo);
 }

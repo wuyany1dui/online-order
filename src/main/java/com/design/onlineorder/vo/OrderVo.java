@@ -25,6 +25,9 @@ public class OrderVo {
     @ApiModelProperty("用户名称")
     private String username;
 
+    @ApiModelProperty("用户昵称")
+    private String nickname;
+
     @ApiModelProperty("商店id")
     private String storeId;
 

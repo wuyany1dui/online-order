@@ -2,6 +2,7 @@ package com.design.onlineorder.controller;
 
 import com.design.onlineorder.enums.ResultEnum;
 import com.design.onlineorder.service.OrderService;
+import com.design.onlineorder.vo.OrderListQueryVo;
 import com.design.onlineorder.vo.OrderVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,7 +25,7 @@ public class OrderController {
 
     @ApiOperation("创建订单")
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody @ApiParam("订单Vo类")OrderVo orderVo) {
+    public ResponseEntity<?> create(@RequestBody @ApiParam("订单Vo类") OrderVo orderVo) {
         return ResponseEntity.ok(orderService.create(orderVo));
     }
 
@@ -33,5 +34,11 @@ public class OrderController {
     public ResponseEntity<?> pay(@PathVariable @ApiParam("订单id") String id) {
         orderService.pay(id);
         return ResponseEntity.ok(ResultEnum.SUCCESS.getLabel());
+    }
+
+    @ApiOperation("查询订单列表")
+    @PostMapping("/queryList")
+    public ResponseEntity<?> queryList(@RequestBody @ApiParam("订单列表查询Vo类") OrderListQueryVo orderListQueryVo) {
+        return ResponseEntity.ok(orderService.queryList(orderListQueryVo));
     }
 }

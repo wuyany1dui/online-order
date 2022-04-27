@@ -14,6 +14,12 @@ public class OrderProductInfoVo {
     @ApiModelProperty("商品id")
     private String productId;
 
+    @ApiModelProperty("商品id")
+    private String productName;
+
+    @ApiModelProperty("图片首选图地址")
+    private String firstImage;
+
     @ApiModelProperty("商品个数")
     private Integer count;
 }

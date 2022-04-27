@@ -1,21 +1,29 @@
 package com.design.onlineorder.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.design.onlineorder.dao.OrderDao;
 import com.design.onlineorder.entity.Order;
 import com.design.onlineorder.enums.OrderStatusEnum;
 import com.design.onlineorder.enums.ResultEnum;
 import com.design.onlineorder.exception.MyException;
 import com.design.onlineorder.service.OrderService;
+import com.design.onlineorder.vo.OrderListPageVo;
+import com.design.onlineorder.vo.OrderListQueryVo;
+import com.design.onlineorder.vo.OrderProductInfoVo;
 import com.design.onlineorder.vo.OrderVo;
+import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Created by DrEAmSs on 2022-04-26 19:21
@@ -54,5 +62,26 @@ public class OrderServiceImpl implements OrderService {
                         .update();
             }
         }
+    }
+
+    @Override
+    public OrderListPageVo queryList(OrderListQueryVo orderListQueryVo) {
+        List<OrderVo> data = Lists.newArrayList();
+        List<Order> orders = orderDao.lambdaQuery()
+                .eq(StringUtils.isNotBlank(orderListQueryVo.getId()), Order::getId, orderListQueryVo.getId())
+                .eq(StringUtils.isNotBlank(orderListQueryVo.getUserId()), Order::getUserId, orderListQueryVo.getUserId())
+                .list();
+        orders.forEach(tempOrder -> {
+            OrderVo orderVo = new OrderVo();
+            BeanUtils.copyProperties(tempOrder, orderVo);
+            orderVo.setProductInfos(JSON.parseObject(tempOrder.getProductInfo(),
+                    new TypeReference<List<OrderProductInfoVo>>() {
+                    }));
+            data.add(orderVo);
+        });
+        return new OrderListPageVo(data.size(), data.stream()
+                .skip((long) orderListQueryVo.getPageIndex() * orderListQueryVo.getPageSize())
+                .limit(orderListQueryVo.getPageSize())
+                .collect(Collectors.toList()));
     }
 }

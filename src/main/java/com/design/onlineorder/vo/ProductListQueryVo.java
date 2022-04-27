@@ -29,8 +29,8 @@ public class ProductListQueryVo {
     private BigDecimal endPrice;
 
     @ApiModelProperty("当前页（以0开始）")
-    private Integer pageIndex;
+    private Integer pageIndex = 0;
 
     @ApiModelProperty("当前页容量")
-    private Integer pageSize;
+    private Integer pageSize = 0;
 }

@@ -1,6 +1,5 @@
 package com.design.onlineorder.service;
 
-import com.design.onlineorder.entity.Comment;
 import com.design.onlineorder.vo.CommentListPageVo;
 import com.design.onlineorder.vo.CommentVo;
 
@@ -19,5 +18,10 @@ public interface CommentService {
     /**
      * 查询评论列表
      */
-    CommentListPageVo queryList(String orderId, String productId, Integer pageIndex, Integer pageSize);
+    CommentListPageVo queryList(String orderId, String productId,String userId, Integer pageIndex, Integer pageSize);
+
+    /**
+     * 删除评论
+     */
+    void delete(List<String> ids);
 }
