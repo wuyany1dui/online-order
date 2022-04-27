@@ -38,7 +38,7 @@ public class UserFilter implements Filter {
             servletResponse.getWriter().write(new ObjectMapper().writeValueAsString(response));
             return;
         } else {
-            // 获取token中的username
+            // 获取token中的userid
             String userId = JwtUtils.getAudience(token);
             // 验证token
             JwtUtils.verifyToken(token, userId);
