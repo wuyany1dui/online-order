@@ -14,9 +14,6 @@ public class CommentVo {
     @ApiModelProperty("订单id")
     private String orderId;
 
-    @ApiModelProperty("餐品id")
-    private String productId;
-
     @ApiModelProperty("评论内容")
     private String content;
 }

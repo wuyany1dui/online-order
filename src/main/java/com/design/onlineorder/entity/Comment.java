@@ -27,12 +27,6 @@ public class Comment {
     @ApiModelProperty("用户昵称")
     private String nickname;
 
-    @ApiModelProperty("餐品id")
-    private String productId;
-
-    @ApiModelProperty("餐品名称")
-    private String productName;
-
     @ApiModelProperty("订单id")
     private String orderId;
 
