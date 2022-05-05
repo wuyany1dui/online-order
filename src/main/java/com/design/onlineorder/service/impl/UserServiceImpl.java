@@ -45,6 +45,7 @@ public class UserServiceImpl implements UserService {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         user.setRegistrationTime(timestamp);
         user.setUpdateTime(timestamp);
+        user.setDeleted(0);
         userDao.save(user);
     }
 

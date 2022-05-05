@@ -80,7 +80,7 @@ public class OrderServiceImpl implements OrderService {
             data.add(orderVo);
         });
         return new OrderListPageVo(data.size(), data.stream()
-                .skip((long) orderListQueryVo.getPageIndex() * orderListQueryVo.getPageSize())
+                .skip((long) (orderListQueryVo.getPageIndex() - 1) * orderListQueryVo.getPageSize())
                 .limit(orderListQueryVo.getPageSize())
                 .collect(Collectors.toList()));
     }
