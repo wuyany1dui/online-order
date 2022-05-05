@@ -31,5 +31,4 @@ public class CorsConfig {
         registration.setOrder(0);
         return registration;
     }
-
 }

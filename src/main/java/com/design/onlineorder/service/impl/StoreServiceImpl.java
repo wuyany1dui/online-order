@@ -7,12 +7,15 @@ import com.design.onlineorder.enums.UserTypeEnum;
 import com.design.onlineorder.exception.MyException;
 import com.design.onlineorder.service.StoreService;
 import com.design.onlineorder.utils.UserUtils;
+import com.design.onlineorder.vo.StoreVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Created by DrEAmSs on 2022-04-26 13:17
@@ -50,5 +53,13 @@ public class StoreServiceImpl implements StoreService {
                 .eq(Store::getUserId, UserUtils.getCurrentUser().getId())
                 .oneOpt();
         return store.orElse(null);
+    }
+
+    @Override
+    public List<StoreVo> queryFirstPageList() {
+        List<Store> stores = storeDao.lambdaQuery().orderBy(true, true, Store::getSort).list();
+        return stores.stream()
+                .map(tempStore -> new StoreVo(tempStore.getId(), tempStore.getName(), tempStore.getDescription()))
+                .collect(Collectors.toList());
     }
 }

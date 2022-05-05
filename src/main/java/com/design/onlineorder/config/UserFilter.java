@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import javax.annotation.Resource;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -29,16 +30,17 @@ public class UserFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String token = httpServletRequest.getHeader("token");
         if (httpServletRequest.getRequestURI().contains("login") ||
-                httpServletRequest.getRequestURI().contains("register")) {
+                httpServletRequest.getRequestURI().contains("register") ||
+                httpServletRequest.getRequestURI().contains("queryFirstPageList")) {
             filterChain.doFilter(servletRequest, servletResponse);
-        }
-        if (StringUtils.isBlank(token) && !httpServletRequest.getRequestURI().contains("preview")) {
+            return;
+        } else if (StringUtils.isBlank(token)) {
             servletResponse.setContentType("application/json;charset=UTF-8");
-            ResponseEntity<?> response = ResponseEntity.badRequest().body(ResultEnum.USER_UNVERIFIED.getLabel());
-            servletResponse.getWriter().write(new ObjectMapper().writeValueAsString(response));
+            ResponseEntity<?> responseData = ResponseEntity.badRequest().body(ResultEnum.USER_UNVERIFIED.getLabel());
+            servletResponse.getWriter().write(new ObjectMapper().writeValueAsString(responseData));
             return;
         } else {
-            // 获取token中的userid
+            // 获取token中的username
             String userId = JwtUtils.getAudience(token);
             // 验证token
             JwtUtils.verifyToken(token, userId);

@@ -22,6 +22,9 @@ public class ProductListQueryVo {
     @ApiModelProperty("餐品类型")
     private String type;
 
+    @ApiModelProperty("餐品名称")
+    private String name;
+
     @ApiModelProperty("餐品起始价格")
     private BigDecimal startPrice;
 

@@ -6,7 +6,6 @@ import com.design.onlineorder.dao.StoreDao;
 import com.design.onlineorder.entity.Product;
 import com.design.onlineorder.entity.Store;
 import com.design.onlineorder.enums.ResultEnum;
-import com.design.onlineorder.enums.UserTypeEnum;
 import com.design.onlineorder.exception.MyException;
 import com.design.onlineorder.service.ProductService;
 import com.design.onlineorder.utils.UserUtils;
@@ -75,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
         });
         return new ProductListPageVo(productListVos.size(),
                 productListVos.stream()
-                        .skip((long) productListQueryVo.getPageIndex() * productListQueryVo.getPageSize())
+                        .skip((long) (productListQueryVo.getPageIndex() - 1) * productListQueryVo.getPageSize())
                         .limit(productListQueryVo.getPageSize())
                         .collect(Collectors.toList()));
     }

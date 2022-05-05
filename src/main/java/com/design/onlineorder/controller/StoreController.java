@@ -34,4 +34,10 @@ public class StoreController {
     public ResponseEntity<?> query() {
         return ResponseEntity.ok(storeService.query());
     }
+
+    @ApiOperation("获取首页人气商店列表")
+    @GetMapping("/queryFirstPageList")
+    public ResponseEntity<?> queryFirstPageList() {
+        return ResponseEntity.ok(storeService.queryFirstPageList());
+    }
 }
