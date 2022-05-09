@@ -3,10 +3,8 @@ package com.design.onlineorder.service.impl;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.design.onlineorder.dao.ProductDao;
 import com.design.onlineorder.dao.StoreDao;
-import com.design.onlineorder.dao.UserDao;
 import com.design.onlineorder.entity.Product;
 import com.design.onlineorder.entity.Store;
-import com.design.onlineorder.entity.User;
 import com.design.onlineorder.enums.ResultEnum;
 import com.design.onlineorder.exception.MyException;
 import com.design.onlineorder.service.ProductService;
@@ -37,9 +35,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Resource
     private StoreDao storeDao;
-
-    @Resource
-    private UserDao userDao;
 
     @Override
     public void create(Product product) {
@@ -72,28 +67,10 @@ public class ProductServiceImpl implements ProductService {
         } else if (Objects.isNull(productListQueryVo.getStartPrice()) && Objects.nonNull(productListQueryVo.getEndPrice())) {
             productLambdaQueryChainWrapper.le(Product::getPrice, productListQueryVo.getEndPrice());
         }
-        List<Product> products = productLambdaQueryChainWrapper.list();
-        List<Store> stores = storeDao.lambdaQuery()
-                .in(Store::getId, products.stream().map(Product::getStoreId).collect(Collectors.toList()))
-                .list();
         List<ProductListVo> productListVos = Lists.newArrayList();
-        List<User> users = userDao.lambdaQuery().list();
-        products.forEach(temp -> {
+        productLambdaQueryChainWrapper.list().forEach(temp -> {
             ProductListVo productListVo = new ProductListVo();
             BeanUtils.copyProperties(temp, productListVo);
-            Optional<Store> optional = stores.stream()
-                    .filter(tempStore -> tempStore.getId().equals(temp.getStoreId()))
-                    .findFirst();
-            optional.ifPresent(o -> {
-                productListVo.setStoreId(o.getId());
-                productListVo.setStoreName(o.getName());
-                productListVo.setMerchantId(o.getUserId());
-                Optional<String> optionalS = users.stream()
-                        .filter(tempUser -> tempUser.getId().equals(o.getUserId()))
-                        .map(User::getNickname)
-                        .findFirst();
-                optionalS.ifPresent(productListVo::setMerchantName);
-            });
             productListVos.add(productListVo);
         });
         return new ProductListPageVo(productListVos.size(),

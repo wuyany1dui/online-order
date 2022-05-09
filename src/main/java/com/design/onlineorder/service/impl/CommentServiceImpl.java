@@ -89,9 +89,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Boolean checkComment(String productId) {
-        List<String> productInfos = orderDao.lambdaQuery().in(Order::getUserId, UserUtils.getCurrentUser().getId())
-                .list().
-                stream()
+        List<String> productInfos = orderDao.lambdaQuery()
+                .in(Order::getUserId, UserUtils.getCurrentUser().getId())
+                .eq(Order::getStatus, OrderStatusEnum.PAID)
+                .list().stream()
                 .map(Order::getProductInfo)
                 .collect(Collectors.toList());
         return productInfos.stream().anyMatch(temp -> temp.contains(productId));
