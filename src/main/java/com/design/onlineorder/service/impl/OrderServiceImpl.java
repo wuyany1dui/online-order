@@ -43,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
         order.setId(id);
         order.setProductInfo(JSON.toJSONString(orderVo.getProductInfos()));
         order.setStatus(OrderStatusEnum.NOT_PAID);
-        orderDao.save(order);
+        orderDao.saveOrUpdate(order);
         return id;
     }
 
@@ -70,6 +70,7 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orders = orderDao.lambdaQuery()
                 .eq(StringUtils.isNotBlank(orderListQueryVo.getId()), Order::getId, orderListQueryVo.getId())
                 .eq(StringUtils.isNotBlank(orderListQueryVo.getUserId()), Order::getUserId, orderListQueryVo.getUserId())
+                .eq(Objects.nonNull(orderListQueryVo.getStatus()), Order::getStatus, orderListQueryVo.getStatus())
                 .list();
         orders.forEach(tempOrder -> {
             OrderVo orderVo = new OrderVo();

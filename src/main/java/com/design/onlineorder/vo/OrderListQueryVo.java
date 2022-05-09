@@ -1,5 +1,6 @@
 package com.design.onlineorder.vo;
 
+import com.design.onlineorder.enums.OrderStatusEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,6 +17,9 @@ public class OrderListQueryVo {
 
     @ApiModelProperty("用户id")
     private String userId;
+
+    @ApiModelProperty("订单状态")
+    private OrderStatusEnum status;
 
     @ApiModelProperty("当前页（以0开始）")
     private Integer pageIndex = 0;
