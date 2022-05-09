@@ -46,4 +46,10 @@ public class CommentController {
         commentService.delete(ids);
         return ResponseEntity.ok(ResultEnum.SUCCESS.getLabel());
     }
+
+    @ApiOperation("检查是否对改餐品有评论权限")
+    @GetMapping("/check")
+    public ResponseEntity<?> checkComment (@RequestParam @ApiParam("餐品id") String productId) {
+        return ResponseEntity.ok(commentService.checkComment(productId));
+    }
 }

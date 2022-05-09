@@ -30,4 +30,12 @@ public class ProductListVo {
 
     @ApiModelProperty("餐品首选图")
     private String firstImage;
+
+    private String storeId;
+
+    private String storeName;
+
+    private String merchantId;
+
+    private String merchantName;
 }

@@ -86,4 +86,14 @@ public class CommentServiceImpl implements CommentService {
         }
         commentDao.removeBatchByIds(ids);
     }
+
+    @Override
+    public Boolean checkComment(String productId) {
+        List<String> productInfos = orderDao.lambdaQuery().in(Order::getUserId, UserUtils.getCurrentUser().getId())
+                .list().
+                stream()
+                .map(Order::getProductInfo)
+                .collect(Collectors.toList());
+        return productInfos.stream().anyMatch(temp -> temp.contains(productId));
+    }
 }

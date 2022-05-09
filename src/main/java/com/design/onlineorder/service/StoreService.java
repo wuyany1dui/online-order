@@ -1,6 +1,8 @@
 package com.design.onlineorder.service;
 
 import com.design.onlineorder.entity.Store;
+import com.design.onlineorder.vo.StoreListQueryVo;
+import com.design.onlineorder.vo.StorePageVo;
 import com.design.onlineorder.vo.StoreVo;
 
 import java.util.List;
@@ -19,6 +21,12 @@ public interface StoreService {
      * 获取当前用户的商店信息
      */
     Store query();
+
+    /**
+     * 获取商店列表
+     * @param storeListQueryVo
+     */
+    StorePageVo queryList(StoreListQueryVo storeListQueryVo);
 
     /**
      * 获取首页人气商店列表

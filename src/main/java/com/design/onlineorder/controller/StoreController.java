@@ -3,6 +3,7 @@ package com.design.onlineorder.controller;
 import com.design.onlineorder.entity.Store;
 import com.design.onlineorder.enums.ResultEnum;
 import com.design.onlineorder.service.StoreService;
+import com.design.onlineorder.vo.StoreListQueryVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -33,6 +34,12 @@ public class StoreController {
     @GetMapping("/query")
     public ResponseEntity<?> query() {
         return ResponseEntity.ok(storeService.query());
+    }
+
+    @ApiOperation("获取商店列表")
+    @PostMapping("/queryList")
+    public ResponseEntity<?> queryList (@RequestBody @ApiParam("商店查询类") StoreListQueryVo storeListQueryVo) {
+        return ResponseEntity.ok(storeService.queryList(storeListQueryVo));
     }
 
     @ApiOperation("获取首页人气商店列表")

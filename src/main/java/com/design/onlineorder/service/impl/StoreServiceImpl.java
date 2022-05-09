@@ -7,7 +7,10 @@ import com.design.onlineorder.enums.UserTypeEnum;
 import com.design.onlineorder.exception.MyException;
 import com.design.onlineorder.service.StoreService;
 import com.design.onlineorder.utils.UserUtils;
+import com.design.onlineorder.vo.StoreListQueryVo;
+import com.design.onlineorder.vo.StorePageVo;
 import com.design.onlineorder.vo.StoreVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -53,6 +56,18 @@ public class StoreServiceImpl implements StoreService {
                 .eq(Store::getUserId, UserUtils.getCurrentUser().getId())
                 .oneOpt();
         return store.orElse(null);
+    }
+
+    @Override
+    public StorePageVo queryList(StoreListQueryVo storeListQueryVo) {
+        List<Store> stores = storeDao.lambdaQuery()
+                .eq(StringUtils.isNotBlank(storeListQueryVo.getUserId()), Store::getUserId, storeListQueryVo.getUserId())
+                .like(StringUtils.isNotBlank(storeListQueryVo.getType()), Store::getType, storeListQueryVo.getType())
+                .list();
+        return new StorePageVo(stores.size(), stores.stream()
+                .skip((long) storeListQueryVo.getPageSize() * (storeListQueryVo.getPageIndex() - 1))
+                .limit(storeListQueryVo.getPageSize())
+                .collect(Collectors.toList()));
     }
 
     @Override

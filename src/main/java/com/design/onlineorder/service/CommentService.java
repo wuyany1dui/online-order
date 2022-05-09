@@ -24,4 +24,9 @@ public interface CommentService {
      * 删除评论
      */
     void delete(List<String> ids);
+
+    /**
+     * 检查用户是否对该餐品有评论权限
+     */
+    Boolean checkComment(String productId);
 }
