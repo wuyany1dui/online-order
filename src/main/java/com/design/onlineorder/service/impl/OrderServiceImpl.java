@@ -39,6 +39,9 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order();
         BeanUtils.copyProperties(orderVo, order);
         String id = UUID.randomUUID().toString().replace("-", "");
+        if (StringUtils.isNotBlank(orderVo.getId())) {
+            id = orderVo.getId();
+        }
         order.setCreateTime(new Timestamp(System.currentTimeMillis()));
         order.setId(id);
         order.setProductInfo(JSON.toJSONString(orderVo.getProductInfos()));
