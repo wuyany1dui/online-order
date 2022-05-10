@@ -71,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
                 .eq(StringUtils.isNotBlank(userId), Comment::getUserId, userId)
                 .eq(StringUtils.isNotBlank(orderId), Comment::getOrderId, orderId)
                 .in(CollectionUtils.isNotEmpty(orderIds), Comment::getOrderId, orderIds).list();
-        return new CommentListPageVo(comments.size(), comments.stream().skip((long) pageIndex * pageSize)
+        return new CommentListPageVo(comments.size(), comments.stream().skip((long) (pageIndex - 1) * pageSize)
                 .limit(pageSize).collect(Collectors.toList()));
     }
 

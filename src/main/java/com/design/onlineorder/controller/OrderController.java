@@ -41,4 +41,10 @@ public class OrderController {
     public ResponseEntity<?> queryList(@RequestBody @ApiParam("订单列表查询Vo类") OrderListQueryVo orderListQueryVo) {
         return ResponseEntity.ok(orderService.queryList(orderListQueryVo));
     }
+
+    @ApiOperation("查询订单详情")
+    @GetMapping("/queryDetail/{id}")
+    public ResponseEntity<?> queryDetail(@PathVariable String id) {
+        return ResponseEntity.ok(orderService.queryDetail(id));
+    }
 }
