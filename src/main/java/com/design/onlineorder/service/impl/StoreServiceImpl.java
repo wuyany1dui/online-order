@@ -18,6 +18,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -31,23 +32,23 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public void create(Store store) {
-        if (!Objects.equals(UserUtils.getCurrentUser().getType(), UserTypeEnum.MERCHANT)) {
+        if (!Objects.equals(UserUtils.getCurrentUser().getType(), UserTypeEnum.MERCHANT) &&
+                !Objects.equals(UserUtils.getCurrentUser().getType(), UserTypeEnum.ADMIN)) {
             throw new MyException(400, ResultEnum.ACCESS_DENIED.getLabel());
-        }
-        Optional<Store> storeOptId = storeDao.lambdaQuery()
-                .eq(Store::getUserId, UserUtils.getCurrentUser().getId())
-                .oneOpt();
-        if (storeOptId.isPresent()) {
-            throw new MyException(400, ResultEnum.TOO_MANY_STORES.getLabel());
         }
         Optional<Store> storeOptName = storeDao.lambdaQuery().eq(Store::getName, store.getName()).oneOpt();
         if (storeOptName.isPresent()) {
             throw new MyException(400, ResultEnum.STORE_NAME_EXISTS.getLabel());
         }
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        store.setCreateTime(timestamp);
-        store.setUpdateTime(timestamp);
-        storeDao.save(store);
+        if (StringUtils.isNotBlank(store.getId())) {
+            store.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+        } else {
+            store.setId(UUID.randomUUID().toString());
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            store.setCreateTime(timestamp);
+            store.setUpdateTime(timestamp);
+        }
+        storeDao.saveOrUpdate(store);
     }
 
     @Override

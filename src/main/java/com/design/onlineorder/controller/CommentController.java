@@ -35,7 +35,7 @@ public class CommentController {
     public ResponseEntity<?> queryList(@RequestParam(required = false) @ApiParam("订单id") String orderId,
                                        @RequestParam(required = false) @ApiParam("餐品id") String productId,
                                        @RequestParam(required = false) @ApiParam("用户id") String userId,
-                                       @RequestParam @ApiParam("当前页数，从0开始") Integer pageIndex,
+                                       @RequestParam @ApiParam("当前页数，从1开始") Integer pageIndex,
                                        @RequestParam @ApiParam("当前页容量") Integer pageSize) {
         return ResponseEntity.ok(commentService.queryList(orderId, productId, userId, pageIndex, pageSize));
     }

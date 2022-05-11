@@ -40,6 +40,7 @@ public class DefaultExceptionHandler {
      * 记录错误日志
      */
     private void logError(HttpServletRequest request, Exception e) {
+        e.printStackTrace();
         log.error("path: {}, queryParam: {}, errorMessage: {}",
                 request.getRequestURI(), request.getQueryString(), e.getMessage());
     }

@@ -15,6 +15,7 @@ import com.design.onlineorder.vo.ProductListPageVo;
 import com.design.onlineorder.vo.ProductListQueryVo;
 import com.design.onlineorder.vo.ProductListVo;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -73,9 +74,12 @@ public class ProductServiceImpl implements ProductService {
             productLambdaQueryChainWrapper.le(Product::getPrice, productListQueryVo.getEndPrice());
         }
         List<Product> products = productLambdaQueryChainWrapper.list();
-        List<Store> stores = storeDao.lambdaQuery()
-                .in(Store::getId, products.stream().map(Product::getStoreId).collect(Collectors.toList()))
-                .list();
+        List<Store> stores = Lists.newArrayList();
+        if (CollectionUtils.isNotEmpty(products)) {
+            stores.addAll(storeDao.lambdaQuery()
+                    .in(Store::getId, products.stream().map(Product::getStoreId).collect(Collectors.toList()))
+                    .list());
+        }
         List<ProductListVo> productListVos = Lists.newArrayList();
         List<User> users = userDao.lambdaQuery().list();
         products.forEach(temp -> {

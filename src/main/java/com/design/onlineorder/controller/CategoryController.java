@@ -30,7 +30,7 @@ public class CategoryController {
         return ResponseEntity.ok(ResultEnum.SUCCESS.getLabel());
     }
 
-    @ApiOperation("删除分类（同时会删除商品已）")
+    @ApiOperation("删除分类（同时会删除商品）")
     @PostMapping("/delete")
     public ResponseEntity<?> delete(@RequestBody @ApiParam("分类id数组") List<String> ids) {
         categoryService.delete(ids);
@@ -40,8 +40,8 @@ public class CategoryController {
     @ApiOperation("查询分类列表")
     @GetMapping("/queryList")
     public ResponseEntity<?> queryList(@RequestParam(required = false) @ApiParam("模糊查询分类名称") String name,
-                                       @RequestParam @ApiParam("当前页，从0开始") Integer pageIndex,
-                                       @RequestParam @ApiParam("当前页容量") Integer pageSize) {
+                                       @RequestParam(required = false) @ApiParam("当前页，从0开始") Integer pageIndex,
+                                       @RequestParam(required = false) @ApiParam("当前页容量") Integer pageSize) {
         return ResponseEntity.ok(categoryService.queryList(name, pageIndex, pageSize));
     }
 

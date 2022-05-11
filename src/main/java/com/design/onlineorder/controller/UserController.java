@@ -4,9 +4,7 @@ import com.design.onlineorder.entity.User;
 import com.design.onlineorder.enums.ResultEnum;
 import com.design.onlineorder.service.UserService;
 import com.design.onlineorder.utils.UserUtils;
-import com.design.onlineorder.vo.ModifyPasswordVo;
-import com.design.onlineorder.vo.UserLoginVo;
-import com.design.onlineorder.vo.UserVo;
+import com.design.onlineorder.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -76,6 +74,19 @@ public class UserController {
     @PostMapping("/modifyPwd")
     public ResponseEntity<?> modifyUserPassword(@RequestBody ModifyPasswordVo modifyPasswordVo) {
         userService.modifyUserPassword(modifyPasswordVo);
+        return ResponseEntity.ok(ResultEnum.SUCCESS.getLabel());
+    }
+
+    @ApiOperation("查询用户列表")
+    @PostMapping("/queryList")
+    public ResponseEntity<?> queryList(@RequestBody UserQueryVo userQueryVo) {
+        return ResponseEntity.ok(userService.queryList(userQueryVo));
+    }
+
+    @ApiOperation("修改用户权限")
+    @PostMapping ("/modifyLevel")
+    public ResponseEntity<?> modifyLevel(@RequestBody ModifyLevelVo modifyLevelVo) {
+        userService.modifyLevel(modifyLevelVo);
         return ResponseEntity.ok(ResultEnum.SUCCESS.getLabel());
     }
 }

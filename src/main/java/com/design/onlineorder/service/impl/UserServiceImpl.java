@@ -9,10 +9,10 @@ import com.design.onlineorder.service.UserService;
 import com.design.onlineorder.utils.FileUtils;
 import com.design.onlineorder.utils.JwtUtils;
 import com.design.onlineorder.utils.UserUtils;
-import com.design.onlineorder.vo.ModifyPasswordVo;
-import com.design.onlineorder.vo.UserLoginVo;
-import com.design.onlineorder.vo.UserVo;
+import com.design.onlineorder.vo.*;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,8 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Created by DrEAmSs on 2022-04-25 17:52
@@ -113,5 +115,29 @@ public class UserServiceImpl implements UserService {
                     .set(User::getPassword, modifyPasswordVo.getNewPassword())
                     .update();
         }
+    }
+
+    @Override
+    public UserPageVo queryList(UserQueryVo userQueryVo) {
+        List<User> users = userDao.lambdaQuery()
+                .like(StringUtils.isNotBlank(userQueryVo.getUsername()), User::getUsername, userQueryVo.getUsername())
+                .like(StringUtils.isNotBlank(userQueryVo.getNickname()), User::getNickname, userQueryVo.getNickname())
+                .list();
+        List<UserVo> userVos = Lists.newArrayList();
+        users.forEach(temp -> {
+            UserVo userVo = new UserVo();
+            BeanUtils.copyProperties(temp, userVo);
+            userVos.add(userVo);
+        });
+        return new UserPageVo(userVos.size(), userVos.stream()
+                .skip((long) (userQueryVo.getPageIndex() - 1) * userQueryVo.getPageSize())
+                .limit(userQueryVo.getPageSize()).collect(Collectors.toList()));
+    }
+
+    @Override
+    public void modifyLevel(ModifyLevelVo modifyLevelVo) {
+        userDao.lambdaUpdate()
+                .set(User::getType, modifyLevelVo.getType())
+                .eq(User::getId, modifyLevelVo.getId()).update();
     }
 }

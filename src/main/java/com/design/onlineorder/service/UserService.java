@@ -1,9 +1,7 @@
 package com.design.onlineorder.service;
 
 import com.design.onlineorder.entity.User;
-import com.design.onlineorder.vo.ModifyPasswordVo;
-import com.design.onlineorder.vo.UserLoginVo;
-import com.design.onlineorder.vo.UserVo;
+import com.design.onlineorder.vo.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -45,4 +43,15 @@ public interface UserService {
      * 修改用户密码
      */
     void modifyUserPassword(ModifyPasswordVo modifyPasswordVo);
+
+    /**
+     * 查询用户列表
+     */
+    UserPageVo queryList(UserQueryVo userQueryVo);
+
+    /**
+     * 修改用户权限
+     * @param id
+     */
+    void modifyLevel(ModifyLevelVo modifyLevelVo);
 }
