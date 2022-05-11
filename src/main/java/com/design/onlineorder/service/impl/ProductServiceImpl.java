@@ -73,7 +73,9 @@ public class ProductServiceImpl implements ProductService {
         } else if (Objects.isNull(productListQueryVo.getStartPrice()) && Objects.nonNull(productListQueryVo.getEndPrice())) {
             productLambdaQueryChainWrapper.le(Product::getPrice, productListQueryVo.getEndPrice());
         }
-        List<Product> products = productLambdaQueryChainWrapper.list();
+        List<Product> products = productLambdaQueryChainWrapper
+                .orderBy(true, false, Product::getUpdateTime)
+                .list();
         List<Store> stores = Lists.newArrayList();
         if (CollectionUtils.isNotEmpty(products)) {
             stores.addAll(storeDao.lambdaQuery()
