@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.design.onlineorder.dao.OrderDao;
 import com.design.onlineorder.dao.ProductDao;
+import com.design.onlineorder.dao.StoreDao;
 import com.design.onlineorder.entity.Order;
 import com.design.onlineorder.entity.Product;
+import com.design.onlineorder.entity.Store;
 import com.design.onlineorder.enums.OrderStatusEnum;
 import com.design.onlineorder.enums.ResultEnum;
 import com.design.onlineorder.exception.MyException;
@@ -40,6 +42,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     private ProductDao productDao;
+
+    @Resource
+    private StoreDao storeDao;
 
     @Override
     public String create(OrderVo orderVo) {
@@ -82,6 +87,37 @@ public class OrderServiceImpl implements OrderService {
             if (Objects.equals(orderOpt.get().getStatus(), OrderStatusEnum.PAID)) {
                 throw new MyException(400, ResultEnum.ORDER_ALREADY_PAID.getLabel());
             } else {
+                String storeId = null;
+                List<OrderProductInfoVo> productInfoVos = JSON.parseObject(orderOpt.get().getProductInfo(),
+                        new TypeReference<List<OrderProductInfoVo>>() {
+                        });
+                List<Product> products = productDao.lambdaQuery()
+                        .in(Product::getId, productInfoVos.stream().map(OrderProductInfoVo::getProductId)
+                                .collect(Collectors.toList()))
+                        .list();
+                storeId = products.get(0).getStoreId();
+                List<Product> updateProducts = Lists.newArrayList();
+                products.forEach(temp -> {
+                    Product product = new Product();
+                    product.setId(temp.getId());
+                    Optional<OrderProductInfoVo> optional = productInfoVos.stream()
+                            .filter(tempInfo -> temp.getId().equals(tempInfo.getProductId()))
+                            .findFirst();
+                    optional.ifPresent(o -> product.setSales(temp.getSales() + o.getCount()));
+                    updateProducts.add(product);
+                });
+                productDao.saveOrUpdateBatch(updateProducts);
+                List<Product> productList = productDao.lambdaQuery().eq(Product::getStoreId, storeId).list();
+                AtomicReference<Integer> sales = new AtomicReference<>(0);
+                AtomicReference<BigDecimal> salesVolume = new AtomicReference<>(BigDecimal.valueOf(0D));
+                productList.forEach(tempProduct -> {
+                    sales.updateAndGet(v -> v + tempProduct.getSales());
+                    double tempSaleVolume = tempProduct.getSales() * tempProduct.getPrice().doubleValue();
+                    salesVolume.set(BigDecimal.valueOf(tempSaleVolume + salesVolume.get().doubleValue()));
+                });
+                storeDao.lambdaUpdate().set(Store::getSales, sales.get()).set(Store::getSalesVolume, salesVolume.get())
+                        .eq(Store::getId, storeId)
+                        .update();
                 orderDao.lambdaUpdate().eq(Order::getId, id)
                         .set(Order::getPayTime, new Timestamp(System.currentTimeMillis()))
                         .set(Order::getStatus, OrderStatusEnum.PAID)

@@ -11,6 +11,9 @@ import lombok.Data;
 @ApiModel
 public class CommentVo {
 
+    @ApiModelProperty("商品id")
+    private String productId;
+
     @ApiModelProperty("订单id")
     private String orderId;
 

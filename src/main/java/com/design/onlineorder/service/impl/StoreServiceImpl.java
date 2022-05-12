@@ -3,6 +3,7 @@ package com.design.onlineorder.service.impl;
 import com.design.onlineorder.dao.StoreDao;
 import com.design.onlineorder.entity.Store;
 import com.design.onlineorder.enums.ResultEnum;
+import com.design.onlineorder.enums.StoreStatusEnum;
 import com.design.onlineorder.enums.UserTypeEnum;
 import com.design.onlineorder.exception.MyException;
 import com.design.onlineorder.service.StoreService;
@@ -48,6 +49,7 @@ public class StoreServiceImpl implements StoreService {
             store.setCreateTime(timestamp);
             store.setUpdateTime(timestamp);
         }
+        store.setStatus(StoreStatusEnum.NORMAL);
         storeDao.saveOrUpdate(store);
     }
 

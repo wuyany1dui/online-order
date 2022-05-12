@@ -52,10 +52,14 @@ public class ProductServiceImpl implements ProductService {
         } else {
             product.setStoreId(store.get().getId());
         }
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        product.setCreateTime(timestamp);
-        product.setUpdateTime(timestamp);
-        productDao.save(product);
+        if (StringUtils.isNotBlank(product.getId())) {
+            product.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+        } else {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            product.setCreateTime(timestamp);
+            product.setUpdateTime(timestamp);
+        }
+        productDao.saveOrUpdate(product);
     }
 
     @Override

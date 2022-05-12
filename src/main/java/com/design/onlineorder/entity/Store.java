@@ -1,6 +1,8 @@
 package com.design.onlineorder.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.design.onlineorder.enums.StoreStatusEnum;
+import com.design.onlineorder.service.StoreService;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -45,4 +47,7 @@ public class Store {
 
     @ApiModelProperty("更新时间")
     private Timestamp updateTime;
+
+    @ApiModelProperty("商店状态")
+    private StoreStatusEnum status;
 }

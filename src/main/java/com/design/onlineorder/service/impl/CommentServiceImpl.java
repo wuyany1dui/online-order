@@ -2,10 +2,8 @@ package com.design.onlineorder.service.impl;
 
 import com.design.onlineorder.dao.CommentDao;
 import com.design.onlineorder.dao.OrderDao;
-import com.design.onlineorder.dao.ProductDao;
 import com.design.onlineorder.entity.Comment;
 import com.design.onlineorder.entity.Order;
-import com.design.onlineorder.entity.Product;
 import com.design.onlineorder.enums.OrderStatusEnum;
 import com.design.onlineorder.enums.ResultEnum;
 import com.design.onlineorder.enums.UserTypeEnum;
@@ -41,38 +39,67 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void create(CommentVo commentVo) {
-        Optional<Order> orderOpt = orderDao.lambdaQuery().eq(Order::getId, commentVo.getOrderId()).oneOpt();
-        if (orderOpt.isEmpty()) {
-            throw new MyException(400, ResultEnum.ORDER_NOT_EXISTS.getLabel());
+//        Optional<Order> orderOpt = orderDao.lambdaQuery().eq(Order::getId, commentVo.getOrderId()).oneOpt();
+//        if (orderOpt.isEmpty()) {
+//            throw new MyException(400, ResultEnum.ORDER_NOT_EXISTS.getLabel());
+//        } else {
+//            if (!Objects.equals(orderOpt.get().getStatus(), OrderStatusEnum.PAID)) {
+//                throw new MyException(400, ResultEnum.ORDER_NOT_PAID_OR_OVERTIME.getLabel());
+//            }
+//        }
+        List<Comment> comments = Lists.newArrayList();
+        if (StringUtils.isBlank(commentVo.getOrderId())) {
+            List<Order> orders = orderDao.lambdaQuery()
+                    .like(StringUtils.isNotBlank(commentVo.getProductId()), Order::getProductInfo, commentVo.getProductId())
+                    .list();
+            orders.forEach(temp -> {
+                Comment comment = new Comment();
+                BeanUtils.copyProperties(commentVo, comment);
+                comment.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                comment.setUserId(UserUtils.getCurrentUser().getId());
+                comment.setNickname(UserUtils.getCurrentUser().getNickname());
+                comment.setUsername(UserUtils.getCurrentUser().getUsername());
+                comment.setOrderId(temp.getId());
+                comment.setDeleted(0);
+                comments.add(comment);
+            });
         } else {
-            if (!Objects.equals(orderOpt.get().getStatus(), OrderStatusEnum.PAID)) {
-                throw new MyException(400, ResultEnum.ORDER_NOT_PAID_OR_OVERTIME.getLabel());
-            }
+            Comment comment = new Comment();
+            BeanUtils.copyProperties(commentVo, comment);
+            comment.setCreateTime(new Timestamp(System.currentTimeMillis()));
+            comment.setUserId(UserUtils.getCurrentUser().getId());
+            comment.setNickname(UserUtils.getCurrentUser().getNickname());
+            comment.setUsername(UserUtils.getCurrentUser().getUsername());
+            comment.setOrderId(commentVo.getOrderId());
+            comment.setDeleted(0);
+            comments.add(comment);
         }
-        Comment comment = new Comment();
-        BeanUtils.copyProperties(commentVo, comment);
-        comment.setCreateTime(new Timestamp(System.currentTimeMillis()));
-        comment.setUserId(UserUtils.getCurrentUser().getId());
-        comment.setNickname(UserUtils.getCurrentUser().getNickname());
-        comment.setUsername(UserUtils.getCurrentUser().getUsername());
-        comment.setOrderId(commentVo.getOrderId());
-        commentDao.save(comment);
+        commentDao.saveBatch(comments);
     }
 
     @Override
     public CommentListPageVo queryList(String orderId, String productId, String userId, Integer pageIndex, Integer pageSize) {
         List<String> orderIds = Lists.newArrayList();
+        List<Comment> comments = Lists.newArrayList();
         if (StringUtils.isNotBlank(productId)) {
             orderIds.addAll(orderDao.lambdaQuery().like(Order::getProductInfo, productId)
                     .list().stream().map(Order::getId)
                     .collect(Collectors.toList()));
+            if (CollectionUtils.isNotEmpty(orderIds)) {
+                comments.addAll(commentDao.lambdaQuery()
+                        .eq(StringUtils.isNotBlank(userId), Comment::getUserId, userId)
+                        .eq(StringUtils.isNotBlank(orderId), Comment::getOrderId, orderId)
+                        .in(Comment::getOrderId, orderIds)
+                        .orderBy(true, false, Comment::getCreateTime)
+                        .list());
+            }
+        } else {
+            comments.addAll(commentDao.lambdaQuery()
+                    .eq(StringUtils.isNotBlank(userId), Comment::getUserId, userId)
+                    .eq(StringUtils.isNotBlank(orderId), Comment::getOrderId, orderId)
+                    .orderBy(true, false, Comment::getCreateTime)
+                    .list());
         }
-        List<Comment> comments = commentDao.lambdaQuery()
-                .eq(StringUtils.isNotBlank(userId), Comment::getUserId, userId)
-                .eq(StringUtils.isNotBlank(orderId), Comment::getOrderId, orderId)
-                .in(CollectionUtils.isNotEmpty(orderIds), Comment::getOrderId, orderIds)
-                .orderBy(true, false, Comment::getCreateTime)
-                .list();
         return new CommentListPageVo(comments.size(), comments.stream().skip((long) (pageIndex - 1) * pageSize)
                 .limit(pageSize).collect(Collectors.toList()));
     }
