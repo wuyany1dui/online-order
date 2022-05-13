@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @ApiOperation("上传用户头像")
-    @GetMapping("/uploadAvatar")
+    @PostMapping("/uploadAvatar")
     public ResponseEntity<?> uploadAvatar(MultipartFile multipartFile) {
         userService.uploadAvatar(multipartFile);
         return ResponseEntity.ok(ResultEnum.SUCCESS.getLabel());

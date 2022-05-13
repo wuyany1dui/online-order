@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
         String absolutePath = FileUtils.uploadFile(multipartFile, filePath, multipartFile.getOriginalFilename());
         userDao.lambdaUpdate()
                 .eq(User::getId, UserUtils.getCurrentUser().getId())
-                .set(User::getAvatar, absolutePath)
+                .set(User::getAvatar, multipartFile.getOriginalFilename())
                 .update();
     }
 

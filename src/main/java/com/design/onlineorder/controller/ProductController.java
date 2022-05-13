@@ -8,10 +8,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
@@ -37,5 +35,18 @@ public class ProductController {
     @PostMapping("/queryList")
     public ResponseEntity<?> queryList(@RequestBody @ApiParam("餐品列表查询实体类") ProductListQueryVo productListQueryVo) {
         return ResponseEntity.ok(productService.queryList(productListQueryVo));
+    }
+
+    @ApiOperation("上传餐品图片")
+    @PostMapping("/uploadImage/{id}")
+    public ResponseEntity<?> uploadAvatar(MultipartFile multipartFile, @PathVariable String id) {
+        productService.uploadAvatar(multipartFile, id);
+        return ResponseEntity.ok(ResultEnum.SUCCESS.getLabel());
+    }
+
+    @ApiOperation("获取首页美味餐品列表")
+    @GetMapping("/queryFirstPageList")
+    public ResponseEntity<?> queryFirstPageList() {
+        return ResponseEntity.ok(productService.queryFirstPageList());
     }
 }

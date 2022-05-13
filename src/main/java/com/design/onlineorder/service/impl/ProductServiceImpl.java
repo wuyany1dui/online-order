@@ -10,6 +10,7 @@ import com.design.onlineorder.entity.User;
 import com.design.onlineorder.enums.ResultEnum;
 import com.design.onlineorder.exception.MyException;
 import com.design.onlineorder.service.ProductService;
+import com.design.onlineorder.utils.FileUtils;
 import com.design.onlineorder.utils.UserUtils;
 import com.design.onlineorder.vo.ProductListPageVo;
 import com.design.onlineorder.vo.ProductListQueryVo;
@@ -18,7 +19,9 @@ import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
@@ -41,6 +44,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Resource
     private UserDao userDao;
+
+    @Value("${onlineOrder.filePath}")
+    private String filePath;
 
     @Override
     public void create(Product product) {
@@ -111,5 +117,20 @@ public class ProductServiceImpl implements ProductService {
                         .skip((long) (productListQueryVo.getPageIndex() - 1) * productListQueryVo.getPageSize())
                         .limit(productListQueryVo.getPageSize())
                         .collect(Collectors.toList()));
+    }
+
+    @Override
+    public void uploadAvatar(MultipartFile multipartFile, String id) {
+        String absolutePath = FileUtils.uploadFile(multipartFile, filePath, multipartFile.getOriginalFilename());
+        productDao.lambdaUpdate()
+                .eq(Product::getId, id)
+                .set(Product::getFirstImage, multipartFile.getOriginalFilename())
+                .update();
+    }
+
+    @Override
+    public List<Product> queryFirstPageList() {
+        List<Product> products = productDao.lambdaQuery().orderBy(true, false, Product::getSales).list();
+        return products.stream().skip(0L).limit(6L).collect(Collectors.toList());
     }
 }

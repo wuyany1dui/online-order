@@ -11,8 +11,8 @@ server:
 
 mybatis-plus:
   mapper-locations: classpath:mappers/*.xml
-  type-aliases-package: com.spnice.sgsms.settingmanagement.entity
-  type-enums-package: com.spnice.sgsms.settingmanagement.enums
+  type-aliases-package: com.design.onlineorder.entity
+  type-enums-package: com.design.onlineorder.enums
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

@@ -4,10 +4,7 @@ import com.design.onlineorder.exception.MyException;
 import org.apache.poi.util.IOUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * @author Created by DrEAmSs on 2022-04-26 11:36
@@ -52,5 +49,20 @@ public class FileUtils {
             }
         }
         return target.getAbsolutePath();
+    }
+
+    /**
+     * 文件下载
+     */
+    public static void downloadFile(String remotePath, OutputStream outputStream) {
+        try (InputStream inputStream = new FileInputStream(remotePath)) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, len);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

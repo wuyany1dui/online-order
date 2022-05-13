@@ -31,7 +31,8 @@ public class UserFilter implements Filter {
         String token = httpServletRequest.getHeader("token");
         if (httpServletRequest.getRequestURI().contains("login") ||
                 httpServletRequest.getRequestURI().contains("register") ||
-                httpServletRequest.getRequestURI().contains("queryFirstPageList")) {
+                httpServletRequest.getRequestURI().contains("queryFirstPageList") ||
+                httpServletRequest.getRequestURI().contains("download")) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         } else if (StringUtils.isBlank(token)) {
