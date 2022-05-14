@@ -28,6 +28,7 @@ public class UserFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         String token = httpServletRequest.getHeader("token");
         if (httpServletRequest.getRequestURI().contains("login") ||
                 httpServletRequest.getRequestURI().contains("register") ||
@@ -36,9 +37,10 @@ public class UserFilter implements Filter {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         } else if (StringUtils.isBlank(token)) {
-            servletResponse.setContentType("application/json;charset=UTF-8");
             ResponseEntity<?> responseData = ResponseEntity.badRequest().body(ResultEnum.USER_UNVERIFIED.getLabel());
-            servletResponse.getWriter().write(new ObjectMapper().writeValueAsString(responseData));
+            httpServletResponse.setStatus(400);
+            httpServletResponse.setContentType("application/json;charset=UTF-8");
+            httpServletResponse.getWriter().write(new ObjectMapper().writeValueAsString(responseData));
             return;
         } else {
             // 获取token中的username
@@ -46,12 +48,12 @@ public class UserFilter implements Filter {
             // 验证token
             JwtUtils.verifyToken(token, userId);
             // token验证之后设置当前用户信息
-            if (Objects.isNull(UserUtils.getCurrentUser())) {
-                if (Objects.isNull(userService)) {
-                    userService = (UserService) SpringUtils.getBean("userServiceImpl");
-                }
-                UserUtils.setCurrentUser(userService.queryById(userId));
+//            if (Objects.isNull(UserUtils.getCurrentUser())) {
+            if (Objects.isNull(userService)) {
+                userService = (UserService) SpringUtils.getBean("userServiceImpl");
             }
+            UserUtils.setCurrentUser(userService.queryById(userId));
+//            }
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

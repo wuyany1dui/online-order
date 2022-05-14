@@ -24,10 +24,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -49,13 +46,34 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public String create(OrderVo orderVo) {
         Order order = new Order();
-        BeanUtils.copyProperties(orderVo, order);
         String id = UUID.randomUUID().toString().replace("-", "");
         if (StringUtils.isNotBlank(orderVo.getId())) {
             id = orderVo.getId();
+            Order oldOrder = orderDao.lambdaQuery().eq(Order::getId, id).one();
+            List<String> storeIds = new ArrayList<>(Arrays.asList(oldOrder.getStoreId().split(",")));
+            List<String> storeNames = new ArrayList<>(Arrays.asList(oldOrder.getStoreName().split(",")));
+            List<String> merchantIds = new ArrayList<>(Arrays.asList(oldOrder.getMerchantId().split(",")));
+            List<String> merchantNames = new ArrayList<>(Arrays.asList(oldOrder.getMerchantName().split(",")));
+            if (!storeIds.contains(orderVo.getStoreId())) {
+                storeIds.add(orderVo.getStoreId());
+            }
+            if (!storeNames.contains(orderVo.getStoreName())) {
+                storeNames.add(orderVo.getStoreName());
+            }
+            if (!merchantIds.contains(orderVo.getMerchantId())) {
+                merchantIds.add(orderVo.getMerchantId());
+            }
+            if (!merchantNames.contains(orderVo.getMerchantName())) {
+                merchantNames.add(orderVo.getMerchantName());
+            }
+            orderVo.setStoreId(String.join(",", storeIds));
+            orderVo.setStoreName(String.join(",", storeNames));
+            orderVo.setMerchantId(String.join(",", merchantIds));
+            orderVo.setMerchantName(String.join(",", merchantNames));
         } else {
             order.setCreateTime(new Timestamp(System.currentTimeMillis()));
         }
+        BeanUtils.copyProperties(orderVo, order);
         order.setId(id);
         order.setProductInfo(JSON.toJSONString(orderVo.getProductInfos()));
         order.setStatus(OrderStatusEnum.NOT_PAID);
@@ -74,6 +92,7 @@ public class OrderServiceImpl implements OrderService {
         });
         price.set(BigDecimal.valueOf(tempPrice.get()));
         order.setPrice(price.get());
+        order.setStoreId(orderVo.getStoreId());
         orderDao.saveOrUpdate(order);
         return id;
     }
@@ -87,7 +106,7 @@ public class OrderServiceImpl implements OrderService {
             if (Objects.equals(orderOpt.get().getStatus(), OrderStatusEnum.PAID)) {
                 throw new MyException(400, ResultEnum.ORDER_ALREADY_PAID.getLabel());
             } else {
-                String storeId = null;
+                String storeId;
                 List<OrderProductInfoVo> productInfoVos = JSON.parseObject(orderOpt.get().getProductInfo(),
                         new TypeReference<List<OrderProductInfoVo>>() {
                         });
